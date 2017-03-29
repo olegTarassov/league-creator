@@ -24,11 +24,11 @@ class Player:
     """
     __slots__ = ['name', 'guardian', 'team', 'pref']
 
-    def __init__(self, name=None, guardian=None, pref=None):
+    def __init__(self, name=None, guardian=None, pref=None, team=None):
         """Initialize all variables"""
         self.name = name
         self.guardian = guardian
-        self.team = None
+        self.team = team
 
         if pref == '':
             self.pref = None
@@ -39,7 +39,8 @@ class Player:
 
     def __str__(self):
         """Print Players attributes"""
-        return '(name:%s, parent:%s, preference:%s)' % (self.name, self.guardian, self.pref)
+        return '(name:%s, parent:%s, team:%s, preference:%s)' \
+                % (self.name, self.guardian, self.team, self.pref)
 
 
 class League:
@@ -67,6 +68,7 @@ class League:
 
         return "\n".join(buff)
 
+
     def load_from_file(self, filename, load):
         """Read CSV and loads the appropriate type of data into the corresponding attributes"""
         with open(filename, 'r') as csvfile:
@@ -78,12 +80,12 @@ class League:
                         self.coaches[team['Coach']] = team['Team']
 
                     self.teams[team['Team']] = list()
+
             elif load == 'players':
                 for player in data_extract:
                     player_details = Player(player['Name'], player['Guardian Name(s)'],
                                             player['Preference'])
 
-                    # append each player's details the players list
                     self.players.append(player_details)
             else:
                 sys.exit("ERROR: Incorrect load type:{}".format(load))
@@ -94,7 +96,39 @@ class League:
                 if free_agent.pref is not None and req in free_agent.pref]
 
 
-#Add player to team function
+    def add_player(self, pl, cond=None):
+        """ Accepts Player Class and adds him/her to
+            a team."""
+        #TODO: need to add try catch for incorrect team return
+
+        if cond is not None:
+            req_team = self.get_team(pl, cond)
+            print("INFO: {} Pref: Added: {} to {}".format(cond, pl.name, pl.pref[cond]))
+        else:
+            req_team = self.get_team(pl)
+            print("INFO: Added: {} to {}".format(pl.name, req_team))
+
+        self.teams[req_team].append(pl.name)
+        pl.team = req_team
+
+
+    def get_team(self, pl, cond=None):
+        """ Return team based on  pref lookup or random. """
+        #TODO need to add try catch for cond which is preference type.
+
+        if cond == 'team':
+            return pl.pref[cond]
+        elif cond == 'coach':
+            return self.coaches[pl.pref[cond]]
+        elif cond == 'friend':
+            #print([item for item in self.players if pl.pref[cond] in item.name][0].team)
+            match = next((l for l in self.players if pl.pref[cond] in l.name), None)
+            if match is not None and match.team is not None:
+                return match.team
+
+        team_sizes = {len(value):key for key, value in self.teams.items()}
+        return team_sizes[min(team_sizes, key=int)]
+
 
 def main():
     """ Main Program"""
@@ -104,38 +138,26 @@ def main():
     u7.load_from_file(FILE_TEAMS, 'teams')
     u7.load_from_file(FILE_PLAYERS, 'players')
 
-    #Debug
-    #print(u7)
 
     players_team_pref = u7.list_filter('team')
     players_coach_pref = u7.list_filter('coach')
     players_friend_pref = u7.list_filter('friend')
 
-#    for free_agent in u7.players:
-        #Iterate and assign in priority
-        #1) condition team,2) condition coach,3)no condition,4)condition friend
- #       if free_agent.pref is not None:
- #           if 'team' in free_agent.pref:
- #               print("Player:{} wants Team:{}".format(free_agent.name, free_agent.pref['team']))
- #           elif 'coach' in free_agent.pref:
- #               print("Player:{} wants Coach:{}".format(free_agent.name, free_agent.pref['coach']))
- #           elif 'friend' in free_agent.pref:
- #           print("Player:{} wants Friend:{}".format(free_agent.name, free_agent.pref['friend']))
+    for free_agent in players_team_pref:
+        u7.add_player(free_agent, 'team')
+
+    for free_agent in players_coach_pref:
+        u7.add_player(free_agent, 'coach')
+
+    for free_agent in u7.players:
+        if free_agent.pref is None:
+            u7.add_player(free_agent)
+
+    for free_agent in players_friend_pref:
+        u7.add_player(free_agent, 'friend')
 
 
-
-
-
-#    for x in players_team_pref:
-#        print("Player:{} wants Team:{}".format(x.name, x.pref['team']))
-#
-#    test = players_team_pref.pop()
-
-   # test.team = 'cowboy'
-   # for free_agent in u7.players:
-   #     if test == free_agent:
-   #         print("team is {}".format(free_agent.team))
-
+    print(u7)
 
     del u7
 
