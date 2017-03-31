@@ -3,22 +3,26 @@
 D.D.O Soccer League
 -----------------------------------
 
-The goal is to create a league that would:
-1) dynamically load teams and their names
+The goal is to create a league that would add players based on their requirements or randomly.
+1) dynamically load teams names and their coaches
 2) add players to the teams.
-	- players can have condition
+	- players can have requirements
 		- team preference
-		- player preference play along side
+		- player preference
 		- coach preference
-	- players added across all teams to maintain equilibrium
+	- players added across all teams fairly.
 
-Alternative
+##Input Files
 
-teams = list()
+###soccer_players.csv
+Name,Guardian Name(s),Preference
+Joe Smith,Joe Parents,
+Jill Tanner,Jill Parents,friend:Joe Smith
+Brad Lee, Brad Parents,coach:Oleg
+Kate Wilson,Maggy Wilson,team:Cosmos
 
-teams.append( make_team( name, coach)
-
-Initializing class with this make sense
-def make_team(name):
-team = {'name': name, 'coach': coach, 'players': []}
-return team
+###soccer_teams.csv
+Team,Coach
+Cosmos,Oleg
+Meteor,Joe
+Flames,
