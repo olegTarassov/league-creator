@@ -16,15 +16,15 @@ The goal is to create a league that would add players based on their requirement
 
 ### soccer_players.csv
 
-Name,Guardian Name(s),Preference→→
-Joe Smith,Joe Parents,→→
-Jill Tanner,Jill Parents,friend:Joe Smith→→
-Brad Lee, Brad Parents,coach:Oleg→→
-Kate Wilson,Maggy Wilson,team:Cosmos→→
+Name,Guardian Name(s),Preference  
+Joe Smith,Joe Parents,  
+Jill Tanner,Jill Parents,friend:Joe Smith  
+Brad Lee, Brad Parents,coach:Oleg  
+Kate Wilson,Maggy Wilson,team:Cosmos  
 
 ### soccer_teams.csv
 
-Team,Coach→→
-Cosmos,Oleg→→
-Meteor,Joe→→
-Flames,→→
+Team,Coach  
+Cosmos,Oleg  
+Meteor,Joe  
+Flames,  
